@@ -1,0 +1,371 @@
+version: "1.0"
+# Canonical catalog of gates PCP enforces on this project. This is the control
+# catalog a future audit-evidence document (`pcp provenance`) reads to build a
+# per-file/per-criterion compliance card. control ids here are written verbatim
+# into .pcp/telemetry.jsonl's `control_id` field by every gate call site — do
+# not rename an id without updating the code that emits it.
+#
+# ssdf_practice references NIST SP 800-218 (Secure Software Development
+# Framework) practice ids. This is an informed mapping to give the catalog a
+# recognizable compliance vocabulary — it is NOT a certified SSDF/CMMC
+# assessment. Treat it as a jumpstart, not a certificate.
+controls:
+  - id: CTRL-001
+    name: "Test suite must pass"
+    layer: build-loop
+    mechanism: "qa.run_test_suite"
+    tool: "pytest | npm test | go test (auto-detected)"
+    enforcement: hard_block
+    description: "Full regression suite runs after every criterion's agent attempt and again at each wave-merge boundary. Blocks on failure. Skips (never blocks) if no test runner is detected — that skip is recorded, not silently treated as a pass."
+    ssdf_practice: ["PW.7.2"]
+
+  - id: CTRL-002
+    name: "Lint clean on changed files"
+    layer: build-loop
+    mechanism: "qa.run_lint"
+    tool: "ruff | eslint (auto-detected)"
+    enforcement: hard_block
+    description: "Lint scoped to the files changed by this criterion's attempt."
+    ssdf_practice: ["PW.7.2"]
+
+  - id: CTRL-003
+    name: "SAST + secret scan clean"
+    layer: build-loop
+    mechanism: "qa.run_sast"
+    tool: "semgrep"
+    enforcement: hard_block
+    description: "Static analysis + secret scan scoped to changed files. Skips (never blocks) if semgrep is not installed."
+    ssdf_practice: ["PW.7.2", "PW.8.1"]
+
+  - id: CTRL-004
+    name: "Layer 1 structural/AST rules"
+    layer: layer1
+    mechanism: "check.py + ci_rules.yaml (ast_pattern, file_exists)"
+    tool: "pcp check (pre-commit)"
+    enforcement: hard_block
+    description: "Deterministic pre-commit gate — modularity (MOD_*) and security (SEC_*) rules. A human can override a specific commit with `[pcp-bypass: reason]`; every bypass is logged (see CTRL-010) and this control's status for that commit is recorded as bypassed, not passed."
+    ssdf_practice: ["PS.1.1", "PW.7.1"]
+
+  - id: CTRL-005
+    name: "Architect review (diff vs persona/architecture/KB)"
+    layer: build-loop
+    mechanism: "architect_review.py, called per-criterion and at wave boundaries"
+    tool: "LLM judge (JUDGE_MODEL)"
+    enforcement: hard_block
+    description: "BLOCK-severity findings stop the build; a failed/erroring judge call is recorded as an error, not silently counted as a pass or a block."
+    ssdf_practice: ["PW.1.3", "PW.4.1"]
+
+  - id: CTRL-006
+    name: "PR alignment vs objective/target_state"
+    layer: layer2
+    mechanism: "gate.py `pcp gate` (PR-time) and build.py's in-loop advisory check"
+    tool: "LLM judge (JUDGE_MODEL)"
+    enforcement: advisory
+    description: "Never hard-blocks merge — score + regressions are logged for review."
+    ssdf_practice: ["PW.2.1"]
+
+  - id: CTRL-007
+    name: "Wave contract validation"
+    layer: wave-merge
+    mechanism: "build.py:_run_wave_merge, dependency completeness check"
+    tool: "n/a (deterministic)"
+    enforcement: hard_block
+    description: "Every declared inter-module dependency must have 100% complete acceptance criteria before the next dependency wave starts."
+    ssdf_practice: ["PS.1.1"]
+
+  - id: CTRL-008
+    name: "Strategy coverage & coupling"
+    layer: wave-merge
+    mechanism: "validate_strategy.py, re-run at each wave boundary"
+    tool: "LLM judge (coverage) + networkx graph math (coupling)"
+    enforcement: hard_block
+    description: "Coverage gaps or severe coupling violations (circular deps, God modules, shared state) block the next wave."
+    ssdf_practice: ["PW.1.1"]
+
+  - id: CTRL-009
+    name: "Deploy phase exit criteria"
+    layer: layer3
+    mechanism: "deploy_check.py, SDLC_phase.yaml exit_criteria"
+    tool: "n/a (deterministic)"
+    enforcement: hard_block
+    description: "Deterministic phase-exit gate — the only gate positioned right before a deploy action."
+    ssdf_practice: ["PO.3.2", "PW.9.1"]
+
+  - id: CTRL-010
+    name: "Bypass accountability"
+    layer: cross-cutting
+    mechanism: "check.py bypass log"
+    tool: "n/a"
+    enforcement: override
+    description: "A human can override CTRL-004 per-commit with `[pcp-bypass: reason]`. Every bypass is appended to bypass_log.yaml (reason + rules bypassed) and to telemetry.jsonl (result: bypassed) — never silent, always auditable."
+    ssdf_practice: ["PO.5.1"]
+
+  - id: CTRL-011
+    name: "Session transcript archival"
+    layer: cross-cutting
+    mechanism: "capture.py archive_transcript()"
+    tool: "n/a"
+    enforcement: advisory
+    description: "Every session transcript pcp capture is invoked on is copied (gzip-compressed) into .pcp/transcripts/ before classification runs — the full raw action record, not just the classifier's distilled BRD/decision-log summary, becomes part of this project's own durable evidence instead of living only in Claude Code's own ~/.claude/projects/ retention."
+    ssdf_practice: ["PO.3.2"]
+
+  - id: CTRL-012
+    name: "Ticket automation (analyze/approve/reject/submit)"
+    layer: cross-cutting
+    mechanism: "program-context-protocol-team: tickets/analysis.py, tickets/actions.py"
+    tool: "LLM judge (JUDGE_MODEL) for analysis; Temporal for submission"
+    enforcement: advisory
+    description: "A ticket ingested via program-context-protocol-team's webhook is analyzed (root-cause hypothesis + fix options), and every human decision (approve one option / reject) is recorded here, with the LLM's full raw analysis response stored as evidence — same as any other QA judge call. A human always decides; nothing in this control auto-picks an option."
+    ssdf_practice: ["PW.4.1", "RV.1.1"]
+
+  - id: CTRL-013
+    name: "Design consistency check"
+    layer: build-loop
+    mechanism: "build.py _run_design_consistency_check()"
+    tool: "n/a — deterministic regex, no external tool"
+    enforcement: advisory
+    description: "PCP Design lifecycle, stage 4 (Verify). For a UI-facing criterion, once .pcp/design_system.md has real established color tokens, flags hardcoded hex color literals in that criterion's target file — a heuristic signal the screen may not be using the project's own design system, not proof either way. Never blocks; a legitimate reason to hardcode a specific value is common (e.g. a brand-mandated exact color)."
+    ssdf_practice: ["PW.7.1"]
+
+  - id: CTRL-014
+    name: "logic_tier drift at wave-merge"
+    layer: wave-merge
+    mechanism: "build.py:_run_wave_tier_drift_check(), 5th wave-merge sub-check"
+    tool: "n/a — deterministic regex, no external tool"
+    enforcement: hard_block
+    description: "A completed criterion declaring logic_tier 1-5 (deterministic through cached-reuse — no runtime LLM call expected by definition) whose own target file demonstrably imports an LLM SDK is a real signal the declared decision no longer matches what was actually built. Only rung 6 (deep-think LLM) is expected to import one. Does not re-examine build_vs_buy — no comparably cheap deterministic signal exists for that field yet."
+    ssdf_practice: ["PW.1.1"]
+
+  - id: CTRL-015
+    name: "design_justification substance check"
+    layer: build-loop
+    mechanism: "build.py _run_design_justification_check(), JUDGE_MODEL + adversarial verify"
+    tool: "LLM judge (JUDGE_MODEL)"
+    enforcement: hard_block
+    description: "Active structural-forcing for PCP Design lifecycle stage 4 — design_audit.py's Feature Exposure Ladder is a passive post-hoc rollup (pure keyword/presence logic, a checklist full of junk strings still classifies as rung 3/4). This check runs during the build itself: judges whether a UI-facing criterion's submitted checklist_passed/jtbd_framing/deviations_from_system reflects real design thinking or was lazily filled just to pass validation, re-verified adversarially before it can block the criterion the same way architect-review/gate findings do."
+    ssdf_practice: ["PW.7.1"]
+
+  - id: CTRL-016
+    name: "build_vs_buy drift at wave-merge"
+    layer: wave-merge
+    mechanism: "build.py:_run_wave_build_vs_buy_drift_check(), 6th wave-merge sub-check"
+    tool: "n/a — deterministic Python import analysis, no external tool"
+    enforcement: hard_block
+    description: "A completed criterion declaring build_vs_buy=reuse_whole or fork_adapt implies an external dependency should be visible in its target file — zero external imports despite that claim is a real signal the declared decision no longer matches what was built. Deliberately narrower than the logic_tier drift check (CTRL-014): build_fresh is NOT checked in the other direction (package names routinely differ from import names — pyyaml/yaml, beautifulsoup4/bs4 — too noisy to trust as a hard gate), and reuse_partial/reimplement_from_reference are skipped entirely (no distinguishing import signature either way)."
+    ssdf_practice: ["PW.1.1"]
+
+  - id: CTRL-017
+    name: "build_vs_buy rationale substance check"
+    layer: build-loop
+    mechanism: "build.py _run_build_vs_buy_justification_check(), deterministic placeholder/word-count check"
+    tool: "n/a — deterministic regex/word-count, no external tool"
+    enforcement: hard_block
+    description: "Structural-forcing for build_vs_buy, same enforcement posture design_justification (CTRL-015) already gets — build_vs_buy's rationale is schema-required to be present but was never checked for substance, so a placeholder string like the literal unfilled prompt template text passed validation as a real decision. Deterministic, not an LLM judge call: unlike design_justification (UI-facing criteria only), build_vs_buy is required on EVERY criterion, so an LLM call here on every attempt would violate Token Discipline for a field that mostly just needs a placeholder-text check, not genuine semantic judgment."
+    ssdf_practice: ["PW.1.1"]
+
+  - id: CTRL-018
+    name: "Build-agent scope guard (over-reach allowlist)"
+    layer: build-loop
+    mechanism: "build.py _run_scope_check() — git-diff changed files vs the module's declared surface (all criterion target files, .pcp/strategy/modules/<module>/, .pcp/design_system.md, test files)"
+    tool: "n/a — deterministic path matching over git diff, no external tool"
+    enforcement: advisory
+    description: "Over-reach guard: a criterion agent modifying files outside its own module's declared surface is the classic unattended-loop failure mode (loop touches unrelated code). PCP had a denylist (protected_path) but no allowlist until now. Warn-only by default — legitimate cross-cutting writes exist (module registries, shared interfaces), so the false-positive rate should be measured on real builds before enforcement; PCP_BUILD_SCOPE_MODE=block upgrades it to a hard per-attempt gate, =off disables (recorded as skipped, never silently)."
+    ssdf_practice: ["PS.1.1", "PW.7.1"]
+
+  - id: CTRL-019
+    name: "Logic-tier mechanism presence (positive check)"
+    layer: wave-merge
+    mechanism: "build.py _run_wave_tier_presence_check() — rungs 2-5 target files checked for their declared rung's mechanism signature (solver/ML/retrieval/cache imports; stdlib lru_cache counts for rung 5)"
+    tool: "n/a — deterministic import analysis, no external tool"
+    enforcement: advisory
+    description: "CTRL-014 checks the negative for rungs <=5 (no LLM SDK); this checks the positive: a rung-2 criterion with no solver import, rung-4 with no retrieval dependency, rung-5 with no cache layer is likely a tier declared but not implemented at that tier. Advisory — the mechanism may live in a shared helper the target imports; earns hard-block only after a measured false-positive rate."
+    ssdf_practice: ["PW.1.1"]
+
+  - id: CTRL-021
+    name: "Context-route staleness"
+    layer: wave-merge
+    mechanism: "context_map.validate() — every route in .pcp/context_map.yaml must resolve to at least one existing file (per known module for {module} templates, or via fallback)"
+    tool: "n/a — deterministic path resolution, no external tool"
+    enforcement: advisory
+    description: "The context routing table is itself a drift surface: files evolve, routes go stale, and a stale route silently starves agents of the context they need — worse and less visible than over-feeding, since a missing rule breaks a gate invisibly while an extra file only costs tokens. Checked at wave boundaries and by pcp doctor."
+    ssdf_practice: ["PW.1.1"]
+
+  - id: CTRL-020
+    name: "Rung-necessity challenge (over/under-declaration)"
+    layer: wave-merge
+    mechanism: "build.py _run_wave_rung_necessity_check() — deterministic judgment-keyword contradiction check for rung-1 declarations, plus ONE batched judge call per wave over completed rung-6 criteria (could a cheaper rung serve?)"
+    tool: "judge model (rung-6 half only; rung-1 half is keyword-deterministic)"
+    enforcement: advisory
+    description: "The Decision Integrity gap: nothing previously challenged a criterion lazily declared rung 6 that a truth table could serve, or rung 1 with judgment-shaped language in its own description. The rung-6 half is the ladder's one irreducibly semantic gate, so it gets the same posture as coverage_score — advisory, recorded, never trusted blindly, never blocking."
+    ssdf_practice: ["PW.1.1"]
+
+  - id: CTRL-022
+    name: "Accessibility (WCAG) scan"
+    layer: build-loop
+    mechanism: "build.py _run_a11y_check(), uat.check_axe() -- @axe-core/cli via npx"
+    tool: "axe-core"
+    enforcement: advisory
+    description: "PCP Design lifecycle, stage 4 addendum. Only fires on a UI-facing criterion that declares a url -- deterministic WCAG scan of the rendered page, no LLM involved. Advisory, same warn-first rollout posture as CTRL-013/018/019/020: a11y defects are real and common in AI-generated UI, but false-positive rate on real projects isn't measured yet."
+    ssdf_practice: ["PW.7.1"]
+
+  - id: CTRL-023
+    name: "Visual quality (checklist-anchored VLM judge)"
+    layer: build-loop
+    mechanism: "build.py _run_visual_quality_check(), uat.check_visual_quality() -- llm.call_json_with_images against a fresh screenshot"
+    tool: "judge model (JUDGE_MODEL)"
+    enforcement: advisory
+    description: "PCP Design lifecycle, stage 4 addendum, from a 2026-07-18 research pass on the intent-to-UI articulation gap: a checklist-anchored VLM judge measures ~94% human-correlation vs. ~21% for a bare freeform review, so this deliberately judges a fixed checklist rather than asking 'does this look good.' Only fires on a UI-facing criterion that declares a url; compares against the criterion's own reference_image when one is declared. Advisory only -- an LLM visual judgment should never hard-block a build until its own false-positive rate is measured on real projects, same posture every other judge-model gate in this catalog started at."
+    ssdf_practice: ["PW.7.1"]
+
+  - id: CTRL-024
+    name: "Module spec alignment (Two Validation Passes, Pass 1)"
+    layer: wave-merge
+    mechanism: "validate_module.py run_validate_module(), called per-module in build.py _run_wave_merge"
+    tool: "judge model (JUDGE_MODEL)"
+    enforcement: advisory
+    description: "Closes an orphan found 2026-07-20: `pcp validate-module` existed as a fully-built standalone command but was never actually called from anywhere in the enforcement lifecycle -- only `validate-strategy` (Pass 2: modules vs objective) was wired into the wave-merge gate; Pass 1 (does each module's own spec still align with the objective/decomposition) had no automatic trigger at all. Advisory, same warn-first rollout posture as every other judge-model gate in this catalog -- false-positive rate on real projects not measured yet."
+    ssdf_practice: ["PW.1.1"]
+
+  - id: CTRL-025
+    name: "Navigation depth (click-depth outliers)"
+    layer: wave-merge
+    mechanism: "build.py _run_nav_depth_check(), self-declared nav_depth field audited against PCP_NAV_DEPTH_THRESHOLD"
+    tool: "n/a (deterministic)"
+    enforcement: advisory
+    description: "How many clicks/taps from the app's primary entry point to reach a feature -- self-declared per criterion like logic_tier/build_vs_buy, not computed via real routing-graph analysis (a bigger, per-framework build this field doesn't earn on its own). Flags criteria missing the field entirely and criteria exceeding the 3-click threshold (default, PCP_NAV_DEPTH_THRESHOLD). Advisory -- a declared value is still a claim, not a measurement."
+    ssdf_practice: ["PW.7.1"]
+
+  - id: CTRL-026
+    name: "Feature customization structural check"
+    layer: build-loop
+    mechanism: "build.py _run_customization_check(), design_justification.customizable + customization_notes"
+    tool: "n/a (deterministic)"
+    enforcement: advisory
+    description: "A criterion declaring design_justification.customizable=true should show SOME settings-shaped signal in its own target file (setting/preference/config keyword) -- a bare true with no such signal reads the same way a lazily-filled design_justification does. Deterministic keyword scan, not a semantic judge call -- cheap, same Token Discipline posture as CTRL-017's build_vs_buy placeholder check."
+    ssdf_practice: ["PW.7.1"]
+
+  - id: CTRL-027
+    name: "Top menu bar convention (desktop_app archetype only)"
+    layer: wave-merge
+    mechanism: "build.py _run_menu_bar_check(), .pcp/design_conventions.yaml ui_archetype + top_menu_bar.required_menus"
+    tool: "n/a (deterministic)"
+    enforcement: advisory
+    description: "File/Edit/View/Help-style top menu bar is a desktop-app convention, not a universal one -- this check stays completely inert (never even runs) unless a human explicitly sets ui_archetype: desktop_app in .pcp/design_conventions.yaml (default web_app). When active, deterministic substring scan of UI-facing criteria target files for each required menu label; missing ones flagged advisory."
+    ssdf_practice: ["PW.7.1"]
+
+  - id: CTRL-028
+    name: "UI kit recipe completeness + import verification"
+    layer: wave-merge
+    mechanism: "build.py _run_wave_ui_kit_check(), .pcp/ui_kit_recipes.yaml organism->component mapping + screen_archetypes->required-organisms recipe"
+    tool: "n/a (deterministic)"
+    enforcement: advisory
+    description: "Build-vs-buy for PCP's UI building blocks: PCP does not build or maintain component code -- shadcn/ui (MIT, vendored per-project, official MCP server for search/retrieval) already solves that. PCP owns the thin layer on top: which organisms an archetype needs (recipe completeness -- a criterion declaring screen_archetypes=[dashboard] should show chart-panel/data-table/kpi-tile among its ui_organisms), and whether a declared organism shows real evidence of use (import-path substring match against the criterion's own target file, same mechanism CTRL-019 already uses for logic_tier). Advisory -- a real import can legitimately not match the hint (re-export, alias), so this is a review signal, not proof of non-use. Stays inert (no telemetry record) unless .pcp/ui_kit_recipes.yaml exists."
+    ssdf_practice: ["PW.7.1"]
+
+  - id: CTRL-029
+    name: "Generic lazy-marker scan"
+    layer: build-loop
+    mechanism: "build.py _run_lazy_marker_check() -- regex scan of ALL changed files for TODO/FIXME/XXX/HACK/placeholder/not-implemented markers and stub function bodies (pass/... only)"
+    tool: "n/a (deterministic regex)"
+    enforcement: advisory
+    description: "Lazy-agent mitigation backlog item 3 (2026-07-20): PCP previously only checked for placeholder text narrowly, inside build_vs_buy/design_justification's own free-text fields (CTRL-017/015). This is the general form -- any changed file, any lazy-shaped marker or stub body -- surfaced as a count/location for a human to judge, since a TODO or a stub can be legitimate. Advisory only, never blocks."
+    ssdf_practice: ["PW.7.1"]
+
+  - id: CTRL-030
+    name: "Integrity Auditor (retrospective statistical drift)"
+    layer: wave-merge
+    mechanism: "integrity_audit.py analyze() -- generalizes coverage_audit.py's drift-detection pattern across telemetry.jsonl: fast completions vs. declared logic_tier, per-module placeholder-flag concentration, recurring unresolved findings, uniform/templated evidence"
+    tool: "n/a (deterministic, statistical)"
+    enforcement: advisory
+    description: "Swarm-role backlog's Integrity Auditor (2026-07-20): retrospective-only -- reads already-complete criteria across the whole project, can't correct what's already built, only flags for human review. Deterministic-first, same posture as every other statistical-drift check in this catalog; the genuinely ambiguous tail (an LLM judging the flagged pattern) is not built in this pass. Runs at wave boundaries, not per-criterion -- the value is seeing patterns across many completed criteria no single-criterion CTRL check can see by design."
+    ssdf_practice: ["PW.1.1"]
+
+  - id: CTRL-031
+    name: "module_logic_breakdown built-code verification"
+    layer: wave-merge
+    mechanism: "build.py _run_wave_logic_breakdown_check() -- keyword-overlap between a module's declared spec.module_logic_breakdown and the combined description+target-file content of its OWN completed criteria"
+    tool: "n/a (deterministic keyword scan)"
+    enforcement: advisory
+    description: "Lazy-agent backlog item 9's verification half: kickoff/pm already keyword-check a declared breakdown item against a module's own criteria descriptions BEFORE build (check_module_logic_breakdown_coverage); this re-checks AFTER build, against completed criteria's actual target-file content -- does code exist that plausibly reflects each declared internal component, not just that a criterion was worded to mention it. Deterministic, not the CTRL-015-style LLM judge the backlog item originally sketched -- the semantic half (does the code genuinely FULFILL the component) stays deferred. Inert unless a module declares module_logic_breakdown."
+    ssdf_practice: ["PW.1.1"]
+
+  - id: CTRL-032
+    name: "Architect pre-flight (pre-implementation sanity check)"
+    layer: build-loop
+    mechanism: "build.py _run_architect_preflight() -- one judge-model call reviewing a HIGH-RISK criterion's declared logic_tier/build_vs_buy/module context BEFORE any code is written, injected as advisory context into attempt 1's own prompt"
+    tool: "judge model (JUDGE_MODEL)"
+    enforcement: advisory
+    description: "Swarm-role backlog's genuinely new lifecycle point: PCP's existing architect-review (CTRL-005) is post-hoc only -- it reviews the diff after code exists. This runs BEFORE, for high-risk criteria only (logic_tier >= 5, or build_vs_buy of reuse_whole/fork_adapt). Advisory prompt-injection in this pass, not the block_findings channel the backlog originally sketched -- PCP's attempt loop has no separate plan-then-code step, so routing this into block_findings would mean skipping a whole attempt with zero code written, a real behavior change to the 3-attempt contract. Upgrade path is the same L1-report-first rollout every other check in this catalog followed."
+    ssdf_practice: ["PW.1.1"]
+
+  - id: CTRL-033
+    name: "ci_rules.yaml contract completeness"
+    layer: wave-merge
+    mechanism: "build.py _run_wave_contract_completeness_check() -- every hard_block rule in ci_rules.yaml missing an ABC-style contract block (preconditions/invariants/recovery) is flagged"
+    tool: "n/a (deterministic)"
+    enforcement: advisory
+    description: "Agent Behavioral Contracts reference pattern (arXiv:2602.22302, 2026-07-20 research pass -- see docs/research-rigidity-vs-reliability-2026-07.md). ci_rules.yaml's rules gained an optional `contract` block (preconditions/invariants/recovery -- Governance is already the existing `severity` field, not duplicated). This is the presence check, same posture CTRL-019 already uses for logic_tier: a hard_block rule with no contract just relies on the flat severity gate, exactly as it always did -- advisory, never blocks, project-wide (one ci_rules.yaml, not per-module)."
+    ssdf_practice: ["PW.1.1"]
+
+  - id: CTRL-034
+    name: "Install-only fast path (direct priorart match)"
+    layer: build-loop
+    mechanism: "build.py _run_install_only() -- criterion/module declares install_only+install_command; human approval (or --yes), then run install_command, then Layer 1 + full test suite as a deterministic smoke test. No LLM calls, no TDD/architect-review cycle."
+    tool: "n/a (deterministic)"
+    enforcement: hard_block
+    description: "When priorart already confirms an existing package is a direct match for a criterion (or whole module), running the full TDD/architect-review/LLM-gate cycle just to write a thin wrapper around an install is pure waste. This fast path skips the coding-agent session entirely -- but never skips verification: a human must confirm the match (install_approvals.yaml, hash-chained like bypass_log.yaml), and the install still has to pass a real smoke test (Layer 1 + full regression suite) before the criterion is marked complete. A decline or a failed smoke test falls through to the normal full build path, never a silent skip."
+    ssdf_practice: ["PW.4.1", "PW.7.2"]
+
+  - id: CTRL-035
+    name: "Objective-conflict gate"
+    layer: build-loop
+    mechanism: "objective_conflicts.reconcile() -- build.py's first preflight step, before any module/agent work starts. An active brd_items.yaml entry with a live drift_flag (set by capture.py's classifier when a captured business item conflicts with objective.md's text) is stamped with a SHA-256 hash of objective.md+target_state.md's content at flag time. If current content still matches that hash, the conflict is unresolved and blocks. If the hash no longer matches, the file was actually edited since the flag was raised -- auto-clears deterministically."
+    tool: "n/a (deterministic hash check; flagging itself is Haiku-classified in capture.py)"
+    enforcement: hard_block
+    description: "2026-07-22 incident, Project O dogfood: a business objective correction was discussed and agreed, objective.md/target_state.md never got rewritten to match, and a 30+-agent build cycle two days later built exactly the rejected shape end-to-end -- every other gate passed, because every gate validates the build against objective.md as given, never against whether objective.md is still true. `pcp objective-conflicts` lists/dismisses flags; `pcp correct-objective` is the human-gated resolution path (LLM proposes an objective.md/target_state.md rewrite from the stated correction, human approves the real diff, then it's written -- same pattern pcp kickoff/pm already use for module specs). `pcp build` also self-captures its own live session (CLAUDE_CODE_SESSION_ID) before this gate even runs, so a correction discussed in the same still-open session that authorizes the build gets a chance to be caught."
+    ssdf_practice: ["PW.1.1", "PW.4.1"]
+
+  - id: CTRL-036
+    name: "Narrative lint (CLAUDE.md vs tracked state)"
+    layer: wave-merge
+    mechanism: "narrative_lint.py run() -- deterministic stale-dated-reference and missing-referenced-file scan of every CLAUDE.md-family file, plus ONE batched judge call comparing status-shaped narrative lines (Pending/Open Decision/Planned/etc.) against current_state.md+architecture.md for semantic contradiction"
+    tool: "judge model (JUDGE_MODEL, contradiction check only; the two file-scan sub-checks are deterministic)"
+    enforcement: advisory
+    description: "2026-07-24 fleet evidence: a context-hygiene pass across 4 projects (Project E, Project W, Project A, Project M) found narrative prose in CLAUDE.md -- stage descriptions, 'Open Decisions,' 'Pending' lists -- drifted from tracked state 3-for-3 in projects checked (largest: ~65 lines of dead launch-weekend content still live 7 weeks post-launch, undetected). Nothing in PCP's existing gate catalog checks free-text prose against current_state.md/architecture.md -- every other gate validates code against spec. Deterministic sub-checks port `~/.claude/scripts/session-hygiene-check.sh`'s mechanical checks into PCP's own enforcement lifecycle (telemetry, not just a SessionStart print); the semantic contradiction check is the one irreducibly judgment-shaped part, same rung-6 posture as CTRL-020's rung-necessity check -- one batched call, advisory, fails open. Standalone via `pcp narrative-lint`; also runs at every wave-merge boundary."
+    ssdf_practice: ["PW.1.1"]
+
+  - id: CTRL-037
+    name: "Build-loop bypass detector"
+    layer: cross-cutting
+    mechanism: "build_loop_bypass.py check() -- git log commit dates vs telemetry.jsonl's last entry timestamp, run by doctor.py's check_environment() (pcp build/watch/deploy's own automatic preflight) and the interactive `pcp doctor`"
+    tool: "n/a (deterministic)"
+    enforcement: advisory
+    description: "2026-07-24 incident (Project O, 3rd recurrence: 07-08, mid-July, 07-21-onward): pcp build's formal gated loop stopped being invoked, not by decision -- a real Postgres schema-bloat bug got killed and never relaunched -- while 31 commits landed via `pcp pm` + ad-hoc work over the next 3 days, telemetry.jsonl silent the whole time. Nothing previously surfaced that drift at the moment it started; it only became visible via manual transcript archaeology. Flags when commits continue past telemetry's last record by more than PCP_BUILD_LOOP_BYPASS_THRESHOLD_DAYS (default 3) -- inert until a project has at least one real telemetry record to compare against."
+    ssdf_practice: ["PW.1.1"]
+
+  - id: CTRL-038
+    name: "Landed-work guard"
+    layer: build-loop
+    mechanism: "build.py landed-work preflight using orphaned_work.find_orphaned_work() -- checks, for each criterion pcp build is about to select from pending status, whether a merge/auto-commit already exists in main matching PCP's own commit conventions (Merge feat/<module>-<criterion_id>, or <module>/<criterion_id>: from the auto-commit path)"
+    tool: "n/a (deterministic)"
+    enforcement: hard_block
+    description: "2026-07-30 incident: pcp build selects work purely from pending status; a criterion whose landed commit never got its status written back gets rebuilt from scratch, paying full agent cost to reproduce code already merged and risking a second, conflicting implementation. Observed live -- thirteen minutes and $6.27 into a run rebuilding three already-merged criteria, with twelve criteria in that state across three modules. Hard-blocks the affected criterion before an agent session is spawned; PCP_ALLOW_REBUILD_LANDED=1 is the escape hatch for a genuine intentional rework of already-landed code."
+    ssdf_practice: ["PW.7.2", "PS.1.1"]
+
+  - id: CTRL-039
+    name: "Exposure-mode justification"
+    layer: wave-merge
+    mechanism: "build.py _run_wave_exposure_check() -- module_acceptance criterion.exposure.mode (ui/api/internal) + exposure.justification, placeholder/word-count check reusing CTRL-017's phrase list verbatim"
+    tool: "n/a (deterministic)"
+    enforcement: advisory
+    description: "2026-08-04: the Feature Exposure Ladder (nav_graph.py, design-audit.py) measures whether a UI-facing criterion is reachable through the built UI -- but a real feature can be legitimately exposed a different way (an API endpoint, an internal/background process) with no UI path planned at all, and scoring that as 'Built, Hidden' would be exactly the false discoverability crisis nav_graph.py's own docstring already names and was built to avoid for the undetermined case. `exposure.mode` is the escape hatch; this check makes it cost something to use -- api/internal without a real, non-placeholder justification on file is flagged. Absence of `exposure` is not a finding (default 'ui', pre-existing behavior). Report-first/advisory like every other wave-merge check on this list."
+    ssdf_practice: ["PW.1.1"]
+
+  - id: CTRL-040
+    name: "Cross-module user-flow wiring"
+    layer: wave-merge
+    mechanism: "flow_wiring.py run_flow() -- walks .pcp/strategy/user_flows.yaml's declared step sequences (navigate/click/fill/submit/assert_visible/assert_text) in a real headless browser (Playwright), once every module a flow spans has completed"
+    tool: "playwright (optional [visual] extra; skipped, not failed, when absent)"
+    enforcement: advisory
+    description: "2026-08-04: every existing wave-merge check validates CODE-level integration -- declared dependencies complete (CTRL-007), the merged test suite passes, a diff review doesn't object. None of them prove a real end-to-end USER JOURNEY spanning several modules still works once those modules are built by different agents in different waves -- a dashboard module and an export module can each pass their own criteria while the button one added never actually calls the other's endpoint. user_flows.yaml (human-authorized via `pcp amend user_flows`, same propose/diff/approve mechanic as decomposition.md/dependency_map.md) declares these journeys; this check is inert (no telemetry record) unless at least one declared flow's modules_spanned are all complete. Report-first/advisory like every other wave-merge check on this list."
+    ssdf_practice: ["PW.7.1", "PW.7.2"]

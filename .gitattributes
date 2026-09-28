@@ -1,0 +1,4 @@
+
+.pcp/current_state.md merge=ours
+.pcp/diff.md merge=ours
+.pcp/bypass_log.yaml merge=union

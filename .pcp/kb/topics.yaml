@@ -1,0 +1,11 @@
+# Topic registry.
+#
+# Scaffolded empty by `pcp init`, before `pcp kickoff` has run and before
+# any source files exist. Deterministic topic finalization (see the kb
+# module's spec.yaml constraints) derives entries here only from its four
+# already-structured inputs -- never from a fresh research call inside
+# topic finalization itself. Do not hand-author entries: this file starts
+# empty and stays empty until the kb module's own topic-finalization step
+# writes to it for real.
+
+topics: []

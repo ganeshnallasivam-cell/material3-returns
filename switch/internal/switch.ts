@@ -135,7 +135,7 @@ export class Switch extends switchBaseClass {
           @change=${this.handleChange} />
 
         <md-focus-ring part="focus-ring" for="switch"></md-focus-ring>
-        <span class="track"> ${this.renderHandle()} </span>
+        <span class="track" part="track"> ${this.renderHandle()} </span>
       </div>
     `;
   }
@@ -156,7 +156,7 @@ export class Switch extends switchBaseClass {
       ${this.renderTouchTarget()}
       <span class="handle-container">
         <md-ripple for="switch" ?disabled="${this.disabled}"></md-ripple>
-        <span class="handle ${classMap(classes)}">
+        <span class="handle ${classMap(classes)}" part="handle">
           ${this.shouldShowIcons() ? this.renderIcons() : html``}
         </span>
       </span>

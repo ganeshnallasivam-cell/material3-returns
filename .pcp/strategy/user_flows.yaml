@@ -1,0 +1,30 @@
+version: "1.0"
+
+# Critical end-to-end user journeys spanning MULTIPLE modules -- distinct
+# from any single module's own acceptance criteria, which never see past
+# their own module boundary. Walked for real in a headless browser by
+# CTRL-040's wave-merge flow-wiring check, once every module a flow spans
+# has completed. Human-authorized like every other file in this directory --
+# edit via `pcp amend user_flows "<change>"`, never by hand.
+#
+# base_url: default target every flow's relative step targets resolve
+# against (e.g. a local dev server or preview deploy). Override per-flow.
+# base_url: "http://localhost:3000"
+
+flows: []
+
+# Example (uncomment and adapt once the modules involved exist):
+# flows:
+#   - id: signup_to_dashboard
+#     description: "new user signs up, creates first project, sees it on the dashboard"
+#     modules_spanned: [auth, projects, dashboard]
+#     steps:
+#       - action: navigate
+#         target: /signup
+#       - action: fill
+#         target: "#email"
+#         value: "test@example.com"
+#       - action: click
+#         target: "#signup-submit"
+#       - action: assert_visible
+#         target: "#dashboard [data-project]"

@@ -140,7 +140,7 @@ export class Checkbox extends checkboxBaseClass {
     // Note: <input> needs to be rendered before the <svg> for
     // form.reportValidity() to work in Chrome.
     return html`
-      <div class="container ${containerClasses}">
+      <div part="container" class="container ${containerClasses}">
         <input
           type="checkbox"
           id="input"

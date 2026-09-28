@@ -1,0 +1,30 @@
+version: "1.0"
+# Deterministic context routing: which files an agent reads per scenario.
+# Human-editable; consumed by pcp build's prompt builder. Rules that keep
+# routing safe (see logic_tier_guide.md's sibling doc rationale):
+# - scenarios are detected from schema fields, never by an LLM
+# - intent files (objective/spec) are routed WHOLE, never fragmented
+# - sliced state must be a GENERATED projection (docs/built.md), never a
+#   hand-maintained copy -- copies diverge, projections can't
+# `{module}` is substituted per-criterion. `fallback` used only when no
+# primary file exists. Routes resolving to zero files are flagged (CTRL-021).
+routes:
+  always:
+    files:
+      - .pcp/objective.md
+      - .pcp/architecture.md
+      - .pcp/architect_persona.md
+  module_state:
+    files:
+      - .pcp/strategy/modules/{module}/docs/built.md
+    fallback:
+      - .pcp/current_state.md
+  ui_facing:
+    files:
+      - .pcp/design_system.md
+  logic_tier_declared:
+    files:
+      - .pcp/logic_tier_guide.md
+  kb_grounding_context:
+    files:
+      - .pcp/kb/context_packages/{module}.md

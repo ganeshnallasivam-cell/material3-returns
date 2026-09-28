@@ -127,6 +127,7 @@ export abstract class Button extends buttonBaseClass {
     // Needed for closure conformance
     const {ariaLabel, ariaHasPopup, ariaExpanded} = this as ARIAMixinStrict;
     return html`<button
+      part="container"
       id="button"
       class="button"
       ?disabled=${this.disabled}
@@ -142,6 +143,7 @@ export abstract class Button extends buttonBaseClass {
     // Needed for closure conformance
     const {ariaLabel, ariaHasPopup, ariaExpanded} = this as ARIAMixinStrict;
     return html`<a
+      part="container"
       id="link"
       class="button"
       aria-label="${ariaLabel || nothing}"
@@ -158,13 +160,14 @@ export abstract class Button extends buttonBaseClass {
 
   private renderContent() {
     const icon = html`<slot
+      part="icon"
       name="icon"
       @slotchange="${this.handleSlotChange}"></slot>`;
 
     return html`
       <span class="touch"></span>
       ${this.trailingIcon ? nothing : icon}
-      <span class="label"><slot></slot></span>
+      <span class="label" part="label"><slot></slot></span>
       ${this.trailingIcon ? icon : nothing}
     `;
   }

@@ -1,0 +1,9 @@
+version: "1.0"
+current_phase: alpha
+phases:
+  - name: alpha
+    exit_criteria:
+      - id: E001
+        description: "Core functionality implemented"
+        check: manual
+        status: pending

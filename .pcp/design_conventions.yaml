@@ -1,0 +1,16 @@
+version: "1.0"
+
+# UI archetype -- what KIND of product this is, for conventions that only
+# apply to some archetypes (a File/Edit/View menu bar is a desktop-app
+# convention; a SaaS dashboard or mobile-style portal has no reason to have
+# one). Default web_app: the menu-bar check below stays inert until a human
+# deliberately opts a project into a different archetype.
+#
+# One of: web_app | desktop_app | mobile | cli
+ui_archetype: web_app
+
+# Only enforced (deterministic substring scan, no LLM) when ui_archetype is
+# desktop_app -- CTRL-027 in build.py's wave-merge. Advisory, warn-first,
+# same rollout posture as every other check in this catalog.
+top_menu_bar:
+  required_menus: ["File", "Edit", "View", "Help"]

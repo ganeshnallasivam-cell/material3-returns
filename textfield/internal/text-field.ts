@@ -566,6 +566,7 @@ export abstract class TextField extends textFieldBaseClass {
 
   private renderField() {
     return staticHtml`<${this.fieldTag}
+      part="field"
       class="field"
       count=${this.value.length}
       ?disabled=${this.disabled}
@@ -592,7 +593,7 @@ export abstract class TextField extends textFieldBaseClass {
 
   private renderLeadingIcon() {
     return html`
-      <span class="icon leading" slot="start">
+      <span part="leading-icon" class="icon leading" slot="start">
         <slot name="leading-icon" @slotchange=${this.handleIconChange}></slot>
       </span>
     `;
@@ -600,7 +601,7 @@ export abstract class TextField extends textFieldBaseClass {
 
   private renderTrailingIcon() {
     return html`
-      <span class="icon trailing" slot="end">
+      <span part="trailing-icon" class="icon trailing" slot="end">
         <slot name="trailing-icon" @slotchange=${this.handleIconChange}></slot>
       </span>
     `;
@@ -621,6 +622,7 @@ export abstract class TextField extends textFieldBaseClass {
     if (this.type === 'textarea') {
       return html`
         <textarea
+          part="input"
           class="input"
           style=${styleMap(style)}
           aria-describedby="description"
@@ -656,6 +658,7 @@ export abstract class TextField extends textFieldBaseClass {
       <div class="input-wrapper">
         ${prefix}
         <input
+          part="input"
           class="input"
           style=${styleMap(style)}
           aria-describedby="description"

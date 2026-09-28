@@ -1,0 +1,102 @@
+version: "1.0"
+
+# PCP's UI building-blocks layer, added 2026-07-20. PCP does NOT build or
+# maintain UI component code -- that's a solved problem (shadcn/ui on Base
+# UI primitives: MIT, copy-paste-vendored per project via `npx shadcn add
+# <name>`, official MCP server for search/retrieval, already the dominant
+# stack among AI UI-generation tools). Verified current as of 2026-07-20 --
+# re-check ui.shadcn.com/docs/components before trusting these names if
+# this file is old; shadcn's own catalog evolves (toast -> sonner already
+# happened once).
+#
+# What PCP owns instead: which organisms an archetype needs (the recipe),
+# where to look for evidence they were actually used (import_path_hint,
+# consumed by build.py's CTRL-028), and how organisms combine into a screen
+# (the rules below). See CLAUDE.md's "UI Building Blocks" section for the
+# full rationale -- this is the build-vs-buy decision recorded there.
+kit: shadcn
+
+# organism -> where its evidence is expected to live. import_path_hint is a
+# SUBSTRING match against a criterion's target file, not an exact resolver
+# (no tsconfig-paths parsing) -- a real re-export/alias can legitimately
+# not match, so CTRL-028 treats a miss as advisory, not proof of non-use.
+# component: null means shadcn has no single installable primitive for
+# this organism -- it's a documented HAND-ASSEMBLED pattern (shadcn's own
+# docs say so explicitly for data-table and form), composed from the
+# primitives listed in the comment. import_path_hint still anchors on the
+# closest real primitive so the check has *something* concrete to look for.
+organisms:
+  primary-nav:
+    component: "sidebar"
+    import_path_hint: "components/ui/sidebar"
+    position: "top bar or left rail"
+  data-table:
+    component: null   # composed: `table` primitive + TanStack Table, per shadcn's own docs -- not a single install
+    import_path_hint: "components/ui/table"
+    position: "main content, below filters"
+  filter-bar:
+    component: null   # composed: input + select, no single shadcn primitive
+    import_path_hint: "components/ui/input"
+    position: "top of content, above the table"
+  modal:
+    component: "dialog"
+    import_path_hint: "components/ui/dialog"
+    position: "centered overlay"
+  toast:
+    component: "sonner"   # NOT "toast" -- shadcn deprecated its own toast component in favor of sonner
+    import_path_hint: "components/ui/sonner"
+    position: "top-right or bottom-center, transient"
+  status-badge:
+    component: "badge"
+    import_path_hint: "components/ui/badge"
+    position: "inline, next to the item it describes"
+  kpi-tile:
+    component: "card"
+    import_path_hint: "components/ui/card"
+    position: "top row of a dashboard"
+  chart-panel:
+    component: "chart"
+    import_path_hint: "components/ui/chart"
+    position: "main content area"
+  form-field-group:
+    component: null   # composed: field/label primitives + react-hook-form, per shadcn's own docs -- not a single install
+    import_path_hint: "components/ui/field"
+    position: "main content, vertical stack"
+  search-box:
+    component: "input"
+    import_path_hint: "components/ui/input"
+    position: "top-left or top-center of content"
+  empty-state:
+    component: "empty"
+    import_path_hint: "components/ui/empty"
+    position: "fills the content area it replaces"
+  comment-thread:
+    component: null   # composed: card + avatar + textarea, genuinely custom -- no anchor primitive close enough to check
+    import_path_hint: null
+    position: "right rail or bottom panel"
+
+# screen_archetype -> required ui_organisms (the recipe CTRL-028 checks
+# completeness against). canvas_editor deliberately has none -- it triggers
+# /priorart per the existing global Prior-Art Check rule instead of a
+# prescribed recipe (a diagram/canvas editor is its own mature-tool
+# decision, not a shadcn-organism composition).
+archetypes:
+  dashboard: ["kpi-tile", "chart-panel", "data-table"]
+  data_entry_form: ["form-field-group"]
+  list_table: ["data-table", "filter-bar", "empty-state"]
+  detail_view: ["kpi-tile"]
+  search_filter: ["search-box", "filter-bar", "empty-state"]
+  settings: ["form-field-group"]
+  chat: ["comment-thread"]
+  canvas_editor: []
+  wizard: ["form-field-group"]
+  auth: ["form-field-group"]
+
+# Composition rules -- documented here for the build agent to read; not yet
+# separately enforced by their own CTRL (recipe-completeness + import-
+# verification above are what CTRL-028 actually checks). Promote a rule to
+# its own deterministic check if/when one proves worth enforcing on its own.
+rules:
+  max_primary_actions_per_screen: 1
+  require_empty_state_for: ["data-table", "chat"]
+  require_confirmation_for_destructive_actions: true
