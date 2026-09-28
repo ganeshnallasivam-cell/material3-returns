@@ -3,6 +3,7 @@ import {createComponent} from '@lit/react';
 import {MdFilledButton} from '../button/filled-button.js';
 import {MdOutlinedButton} from '../button/outlined-button.js';
 import {MdCheckbox} from '../checkbox/checkbox.js';
+import {MdTooltip} from '../tooltip/tooltip.js';
 import {MdSwitch} from '../switch/switch.js';
 import {MdFilledTextField} from '../textfield/filled-text-field.js';
 import {MdBadge} from '../labs/badge/badge.js';
@@ -127,5 +128,11 @@ export const OutlinedCard = createComponent({
 export const Item = createComponent({
   tagName: 'md-item',
   elementClass: MdItem,
+  react: React,
+});
+
+export const Tooltip = createComponent({
+  tagName: 'md-tooltip',
+  elementClass: MdTooltip,
   react: React,
 });

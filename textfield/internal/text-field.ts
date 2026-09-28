@@ -683,6 +683,7 @@ export abstract class TextField extends textFieldBaseClass {
           @change=${this.redispatchEvent}
           @focus=${this.handleFocusChange}
           @blur=${this.handleFocusChange}
+          @keydown=${this.handleKeydown}
           @input=${this.handleInput}
           @select=${this.redispatchEvent} />
         ${suffix}
@@ -726,6 +727,13 @@ export abstract class TextField extends textFieldBaseClass {
   private handleInput(event: InputEvent) {
     this.dirty = true;
     this.value = (event.target as HTMLInputElement).value;
+  }
+
+  private handleKeydown(event: KeyboardEvent) {
+    if (event.key === 'Enter' && !event.defaultPrevented && this.type !== 'textarea') {
+      const form = (this as unknown as {form?: HTMLFormElement}).form ?? this.closest('form');
+      form?.requestSubmit();
+    }
   }
 
   private redispatchEvent(event: Event) {

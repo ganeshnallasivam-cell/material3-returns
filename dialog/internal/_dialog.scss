@@ -78,7 +78,7 @@
     opacity: 32%;
     pointer-events: none;
     position: fixed;
-    z-index: 1;
+    z-index: var(--md-sys-z-index-scrim, 1000);
   }
 
   :host([open]) .scrim {

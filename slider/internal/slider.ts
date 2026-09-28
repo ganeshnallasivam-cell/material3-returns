@@ -124,7 +124,7 @@ export class Slider extends sliderBaseClass {
   /**
    * The step between values.
    */
-  @property({type: Number}) step = 1;
+  @property() step: number | 'any' = 1;
 
   /**
    * Whether or not to show tick marks.
@@ -330,8 +330,8 @@ export class Slider extends sliderBaseClass {
   }
 
   protected override render() {
-    const step = this.step === 0 ? 1 : this.step;
-    const range = Math.max(this.max - this.min, step);
+    const numericStep = this.step === 'any' || this.step === 0 ? 1 : Number(this.step);
+    const range = Math.max(this.max - this.min, numericStep);
     const startFraction = this.range
       ? ((this.renderValueStart ?? this.min) - this.min) / range
       : 0;
@@ -341,7 +341,7 @@ export class Slider extends sliderBaseClass {
       '--_start-fraction': String(startFraction),
       '--_end-fraction': String(endFraction),
       // for generating tick marks
-      '--_tick-count': String(range / step),
+      '--_tick-count': String(range / numericStep),
     };
     const containerClasses = {ranged: this.range};
 
