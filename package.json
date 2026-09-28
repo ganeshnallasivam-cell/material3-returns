@@ -63,6 +63,7 @@
   "exports": {
     ".": "./index.js",
     "./react": "./react/index.js",
+    "./badge": "./labs/badge/badge.js",
     "./*": "./*"
   },
   "dependencies": {

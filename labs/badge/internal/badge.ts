@@ -13,12 +13,20 @@ import {classMap} from 'lit/directives/class-map.js';
  */
 export class Badge extends LitElement {
   @property() value = '';
+  @property({type: Number}) max = 999;
+  @property({type: Boolean}) dot = false;
 
   protected override render() {
-    const classes = {'md3-badge--large': this.value};
+    const classes = {
+      'md3-badge--large': this.value,
+      'md3-badge--dot': this.dot,
+    };
+    const displayValue =
+      this.value === '' || Number(this.value) <= this.max ? this.value
+      : `${this.max}+`;
 
-    return html`<div class="md3-badge ${classMap(classes)}">
-      <p class="md3-badge__value">${this.value}</p>
+    return html`<div part="badge" class="md3-badge ${classMap(classes)}">
+      <p part="value" class="md3-badge__value">${displayValue}</p>
     </div>`;
   }
 }

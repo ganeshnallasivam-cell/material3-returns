@@ -1,0 +1,8 @@
+version: "1.0"
+module: badge
+description: "What this module does (10 words minimum)."
+objective_coverage:
+  - "Which part of objective.md this covers"
+dependencies: []
+constraints:
+  - "List constraints here"

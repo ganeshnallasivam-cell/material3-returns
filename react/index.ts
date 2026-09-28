@@ -5,6 +5,7 @@ import {MdOutlinedButton} from '../button/outlined-button.js';
 import {MdCheckbox} from '../checkbox/checkbox.js';
 import {MdSwitch} from '../switch/switch.js';
 import {MdFilledTextField} from '../textfield/filled-text-field.js';
+import {MdBadge} from '../labs/badge/badge.js';
 
 export const FilledButton = createComponent({
   tagName: 'md-filled-button',
@@ -46,4 +47,10 @@ export const FilledTextField = createComponent({
     onChange: 'change',
     onInput: 'input',
   },
+});
+
+export const Badge = createComponent({
+  tagName: 'md-badge',
+  elementClass: MdBadge,
+  react: React,
 });
