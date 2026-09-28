@@ -15,13 +15,13 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/designtrove/material3-returns.git"
+    "url": "git+https://github.com/ganeshnallasivam-cell/material3-returns.git"
   },
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/designtrove/material3-returns/issues"
+    "url": "https://github.com/ganeshnallasivam-cell/material3-returns/issues"
   },
-  "homepage": "https://github.com/designtrove/material3-returns#readme",
+  "homepage": "https://github.com/ganeshnallasivam-cell/material3-returns#readme",
   "scripts": {
     "build": "wireit",
     "build:ts": "wireit",

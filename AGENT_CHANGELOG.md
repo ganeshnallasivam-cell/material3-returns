@@ -71,3 +71,10 @@ Append-only log of changes made by AI agents/harnesses working on this project. 
 - Why: resolved developer bugs (#5498 scrollbar bleed, #5502 active tab center scroll, #5522 select popover x/y offsets, #5760 menu aria-hidden focus retention warning)
 - Commitment: tabs scroller renders cleanly cross-browser without scrollbars and centers active tabs, select supports x/y popover offsets, menu defers aria-hidden until focus restoration completes
 - Failure Signature: scrollbars visible in tabs, tabs snapping abruptly to edges, or axe accessibility violation for focused nodes within aria-hidden subtrees
+
+## 2026-09-28 12:54 PT — Antigravity
+
+- Changed: package.json
+- Why: verified public repository visibility and Apache-2.0 licensing, and updated package.json repository/bugs/homepage URLs to point directly to ganeshnallasivam-cell/material3-returns
+- Commitment: package metadata accurately maps to the public open-source GitHub repository under the Apache-2.0 license
+- Failure Signature: 404 on package.json repository URLs or mismatched license field
