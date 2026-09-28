@@ -43,3 +43,10 @@ Append-only log of changes made by AI agents/harnesses working on this project. 
 - Why: implemented md-item layout component modernization with CSS shadow parts (::part(container), ::part(text), ::part(overline), ::part(headline), ::part(supporting-text)), React 19 wrapper (Item), and package export
 - Commitment: md-item cleanly exposes styling parts for list and layout item containers with full React 19 typings
 - Failure Signature: missing ::part attributes or TypeScript failure importing Item from @designtrove/material-web/react
+## 2026-09-28 10:05 PT — Antigravity
+
+- Changed: textfield/internal/text-field.ts, dialog/internal/_dialog.scss, slider/internal/slider.ts, react/index.ts
+- Why: resolved top community friction points from @material/web (#4182 Enter form submit, #4948 scrim z-index, #5077 continuous slider step) and cleaned duplicate React exports
+- Commitment: single-line text fields submit enclosing forms on Enter, scrim layers above tabs at z-index 1000, slider steps allow continuous scrubbing
+- Failure Signature: form submission failing on Enter keypress in textfield or TS2345 type error on slider step build
+
