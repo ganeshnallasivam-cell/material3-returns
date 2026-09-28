@@ -22,6 +22,10 @@ This document details every resolved upstream bug, developer friction point, and
 | **#5728** | `md-filled-text-field`, `md-outlined-text-field` | Password inputs rendered the native browser password reveal eye on Edge/IE, overlapping custom trailing icons. | Added `::-ms-reveal { display: none; }` to `_input.scss`. |
 | **#5983 / #5949** | `md-radio` | Radio buttons did not dispatch `input` events during keyboard arrow navigation, breaking dynamic framework bindings. | Added bubbling, composed `InputEvent('input')` dispatch alongside `change` in `SingleSelectionController`. |
 | **#5780** | `md-button`, `md-icon-button` | Adding `formnovalidate` to buttons failed to bypass form constraint validation on submit. | Added `formNoValidate` property to `mixinFormSubmitter`, delegating to `form.submit()` when active. |
+| **#5498** | `md-tabs` | Default browser scrollbars appeared across tab bars on scroll overflow. | Suppressed scrollbars cross-browser via `scrollbar-width: none`, `-ms-overflow-style: none`, and `::-webkit-scrollbar { display: none; }`. |
+| **#5502** | `md-tabs` | `scrollToTab()` snapped tabs to the boundary edges rather than centering the active tab in the visible tab strip. | Rewrote `scrollToTab()` calculation to `offset - (hostExtent - extent) / 2` with bound clamping for centered scrolling. |
+| **#5522** | `md-select`, `md-filled-select`, `md-outlined-select` | Select components did not support `x-offset` or `y-offset` positioning offsets for custom popovers. | Added `xOffset` and `yOffset` properties to `Select` and forwarded them directly to internal `md-menu`. |
+| **#5760** | `md-menu` | Menu set `aria-hidden="true"` prematurely before closing animations finished, triggering accessibility tree errors on focused child elements. | Moved `aria-hidden="true"` assignment to closing callbacks and animation finish events after focus has safely restored. |
 
 ---
 

@@ -423,10 +423,7 @@ export abstract class Menu extends LitElement {
 
     if (this.open) {
       this.removeAttribute('aria-hidden');
-      return;
     }
-
-    this.setAttribute('aria-hidden', 'true');
   }
 
   override update(changed: PropertyValues<Menu>) {
@@ -671,6 +668,7 @@ export abstract class Menu extends LitElement {
    * Focuses the last focused element.
    */
   private readonly onClosed = () => {
+    this.setAttribute('aria-hidden', 'true');
     if (this.quick) {
       this.dispatchEvent(new Event('closing'));
       this.dispatchEvent(new Event('closed'));
@@ -888,6 +886,7 @@ export abstract class Menu extends LitElement {
     });
 
     surfaceHeightAnimation.addEventListener('finish', () => {
+      this.setAttribute('aria-hidden', 'true');
       surfaceEl.classList.toggle('animating', false);
       childrenAnimations.forEach(([child]) => {
         child.classList.toggle('md-menu-hidden', false);

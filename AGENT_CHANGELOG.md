@@ -64,3 +64,10 @@ Append-only log of changes made by AI agents/harnesses working on this project. 
 - Commitment: downstream consumers have transparent traceability of all Google @material/web bug fixes, automated CI matrix validation, and signed release tags
 - Failure Signature: missing FIXES.md or GitHub Actions workflow failure on commit push
 
+
+## 2026-09-28 10:38 PT — Antigravity
+
+- Changed: tabs/internal/_tabs.scss, tabs/internal/tabs.ts, select/internal/select.ts, menu/internal/menu.ts, FIXES.md
+- Why: resolved developer bugs (#5498 scrollbar bleed, #5502 active tab center scroll, #5522 select popover x/y offsets, #5760 menu aria-hidden focus retention warning)
+- Commitment: tabs scroller renders cleanly cross-browser without scrollbars and centers active tabs, select supports x/y popover offsets, menu defers aria-hidden until focus restoration completes
+- Failure Signature: scrollbars visible in tabs, tabs snapping abruptly to edges, or axe accessibility violation for focused nodes within aria-hidden subtrees

@@ -165,6 +165,18 @@ export abstract class Select extends selectBaseClass {
   @property({attribute: 'menu-align'}) menuAlign: 'start' | 'end' = 'start';
 
   /**
+   * Offsets the menu's inline alignment from the select by the given number in
+   * pixels.
+   */
+  @property({type: Number, attribute: 'x-offset'}) xOffset = 0;
+
+  /**
+   * Offsets the menu's block alignment from the select by the given number in
+   * pixels.
+   */
+  @property({type: Number, attribute: 'y-offset'}) yOffset = 0;
+
+  /**
    * The value of the currently selected option.
    *
    * Note: For SSR, set `[selected]` on the requested option and `displayText`
@@ -489,6 +501,8 @@ export abstract class Select extends selectBaseClass {
         .quick=${this.quick}
         .positioning=${this.menuPositioning}
         .typeaheadDelay=${this.typeaheadDelay}
+        .xOffset=${this.xOffset}
+        .yOffset=${this.yOffset}
         .anchorCorner=${this.menuAlign === 'start' ? 'end-start' : 'end-end'}
         .menuCorner=${this.menuAlign === 'start' ? 'start-start' : 'start-end'}
         @opening=${this.handleOpening}

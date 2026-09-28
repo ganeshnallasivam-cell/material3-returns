@@ -151,12 +151,10 @@ export class Tabs extends LitElement {
 
     const offset = tabToScrollTo.offsetLeft;
     const extent = tabToScrollTo.offsetWidth;
-    const scroll = this.scrollLeft;
     const hostExtent = this.offsetWidth;
-    const scrollMargin = 48;
-    const min = offset - scrollMargin;
-    const max = offset + extent - hostExtent + scrollMargin;
-    const to = Math.min(min, Math.max(max, scroll));
+    const maxScroll = this.tabsScrollerElement.scrollWidth - hostExtent;
+    // Center the tab within the scroller viewport
+    const to = Math.max(0, Math.min(offset - (hostExtent - extent) / 2, maxScroll));
     // When a tab is focused, use 'auto' to use the CSS `scroll-behavior`. The
     // default behavior is smooth scrolling. However, when there is not a tab
     // focused on initialization, use 'instant' to immediately bring the focused
