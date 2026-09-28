@@ -215,10 +215,12 @@ export class MenuItemController implements ReactiveController {
    * menu.
    */
   onKeydown = (event: KeyboardEvent) => {
-    // Check if the interactive element is an anchor tag. If so, click it.
-    if (this.host.href && event.code === 'Enter') {
+    // Check if the interactive element is an anchor tag or button. If so, trigger click on Enter/Space.
+    if (event.code === 'Enter' || event.code === 'Space') {
       const interactiveElement = this.getInteractiveElement();
-      if (interactiveElement instanceof HTMLAnchorElement) {
+      if (this.host.href && interactiveElement instanceof HTMLAnchorElement && event.code === 'Enter') {
+        interactiveElement.click();
+      } else if (!this.host.href && interactiveElement) {
         interactiveElement.click();
       }
     }

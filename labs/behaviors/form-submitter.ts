@@ -54,6 +54,11 @@ export interface FormSubmitter {
    * button's name/value will be added to the form.
    */
   value: string;
+
+  /**
+   * Disables form constraint validation on submission when true.
+   */
+  formNoValidate: boolean;
 }
 
 /**
@@ -87,6 +92,9 @@ export function mixinFormSubmitter<
     set name(name: string) {
       this.setAttribute('name', name);
     }
+
+    @property({type: Boolean, attribute: 'formnovalidate'})
+    formNoValidate = false;
 
     // Mixins must have a constructor with `...args: any[]`
     // tslint:disable-next-line:no-any
@@ -130,7 +138,12 @@ export function mixinFormSubmitter<
           );
 
           elementInternals.setFormValue(this.value);
-          form.requestSubmit();
+
+          if (this.formNoValidate || this.hasAttribute('formnovalidate')) {
+            form.submit();
+          } else {
+            form.requestSubmit();
+          }
         });
       });
     }

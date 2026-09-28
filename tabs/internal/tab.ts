@@ -59,6 +59,21 @@ export class Tab extends tabBaseClass {
   }
 
   /**
+   * The URL that the tab points to. When set, clicking the tab acts as a hyperlink.
+   */
+  @property() href = '';
+
+  /**
+   * Where to display the linked URL.
+   */
+  @property() target: '_blank' | '_parent' | '_self' | '_top' | '' = '';
+
+  /**
+   * Causes the browser to treat the linked URL as a download.
+   */
+  @property() download = '';
+
+  /**
    * In SSR, set this to true when an icon is present.
    */
   @property({type: Boolean, attribute: 'has-icon'}) hasIcon = false;
@@ -83,6 +98,15 @@ export class Tab extends tabBaseClass {
     if (!isServer) {
       this.internals.role = 'tab';
       this.addEventListener('keydown', this.handleKeydown.bind(this));
+      this.addEventListener('click', (event: MouseEvent) => {
+        if (this.href && !event.defaultPrevented) {
+          const anchor = document.createElement('a');
+          anchor.href = this.href;
+          if (this.target) anchor.target = this.target;
+          if (this.download) anchor.download = this.download;
+          anchor.click();
+        }
+      });
     }
   }
 

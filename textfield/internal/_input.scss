@@ -27,14 +27,20 @@
       opacity: 1;
     }
 
-    // Remove built-in datepicker icon on Chrome
-    &::-webkit-calendar-picker-indicator {
+    // Remove built-in datepicker icon on Chrome and Firefox
+    &::-webkit-calendar-picker-indicator,
+    &::-moz-calendar-picker-indicator {
       display: none;
     }
 
     // Remove built-in search icons on Chrome when type='search'
     &::-webkit-search-decoration,
     &::-webkit-search-cancel-button {
+      display: none;
+    }
+
+    // Remove Edge/IE password reveal icon
+    &::-ms-reveal {
       display: none;
     }
 
