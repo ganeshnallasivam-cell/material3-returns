@@ -14,6 +14,7 @@ import {MdNavigationDrawer} from '../labs/navigationdrawer/navigation-drawer.js'
 import {MdElevatedCard} from '../labs/card/elevated-card.js';
 import {MdFilledCard} from '../labs/card/filled-card.js';
 import {MdOutlinedCard} from '../labs/card/outlined-card.js';
+import {MdItem} from '../labs/item/item.js';
 
 export const FilledButton = createComponent({
   tagName: 'md-filled-button',
@@ -120,5 +121,11 @@ export const FilledCard = createComponent({
 export const OutlinedCard = createComponent({
   tagName: 'md-outlined-card',
   elementClass: MdOutlinedCard,
+  react: React,
+});
+
+export const Item = createComponent({
+  tagName: 'md-item',
+  elementClass: MdItem,
   react: React,
 });

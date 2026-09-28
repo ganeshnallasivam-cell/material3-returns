@@ -36,3 +36,10 @@ Append-only log of changes made by AI agents/harnesses working on this project. 
 - Why: implemented md-navigation-drawer and md-card (elevated, filled, outlined) modernization with CSS shadow parts (::part(drawer), ::part(content), ::part(container), ::part(outline)), React 19 wrappers (NavigationDrawer with onNavigationDrawerChanged event, ElevatedCard, FilledCard, OutlinedCard), and package exports
 - Commitment: navigation drawer and card variants cleanly support external CSS part styling and export typed React 19 component definitions with zero wireit build warnings
 - Failure Signature: missing ::part attributes or TypeScript failure importing NavigationDrawer / Card variants from @designtrove/material-web/react
+
+## 2026-09-28 09:02 PT — Antigravity
+
+- Changed: labs/item/internal/item.ts, react/index.ts, package.json
+- Why: implemented md-item layout component modernization with CSS shadow parts (::part(container), ::part(text), ::part(overline), ::part(headline), ::part(supporting-text)), React 19 wrapper (Item), and package export
+- Commitment: md-item cleanly exposes styling parts for list and layout item containers with full React 19 typings
+- Failure Signature: missing ::part attributes or TypeScript failure importing Item from @designtrove/material-web/react

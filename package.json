@@ -72,7 +72,8 @@
     "./navigation-drawer": "./labs/navigationdrawer/navigation-drawer.js",
     "./card/elevated-card": "./labs/card/elevated-card.js",
     "./card/filled-card": "./labs/card/filled-card.js",
-    "./card/outlined-card": "./labs/card/outlined-card.js"
+    "./card/outlined-card": "./labs/card/outlined-card.js",
+    "./item": "./labs/item/item.js"
   },
   "dependencies": {
     "@lit/context": "^1.1.6",

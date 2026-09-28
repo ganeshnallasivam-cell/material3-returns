@@ -24,16 +24,17 @@ export class Item extends LitElement {
 
   override render() {
     return html`
-      <slot name="container"></slot>
+      <slot part="container" name="container"></slot>
       <slot class="non-text" name="start"></slot>
-      <div class="text">
-        <slot name="overline" @slotchange=${this.handleTextSlotChange}></slot>
+      <div class="text" part="text">
+        <slot name="overline" part="overline" @slotchange=${this.handleTextSlotChange}></slot>
         <slot
           class="default-slot"
           @slotchange=${this.handleTextSlotChange}></slot>
-        <slot name="headline" @slotchange=${this.handleTextSlotChange}></slot>
+        <slot name="headline" part="headline" @slotchange=${this.handleTextSlotChange}></slot>
         <slot
           name="supporting-text"
+          part="supporting-text"
           @slotchange=${this.handleTextSlotChange}></slot>
       </div>
       <slot class="non-text" name="trailing-supporting-text"></slot>
