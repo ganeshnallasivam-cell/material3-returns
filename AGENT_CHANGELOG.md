@@ -57,3 +57,10 @@ Append-only log of changes made by AI agents/harnesses working on this project. 
 - Commitment: tabs support semantic hyperlink routing, menu items trigger clicks on Enter/Space, radio dispatches input event on arrow navigation, formnovalidate bypasses constraint checks
 - Failure Signature: tab failing to follow href, menu button failing keyboard clicks, or form validation triggering when formnovalidate is active
 
+## 2026-09-28 10:22 PT — Antigravity
+
+- Changed: FIXES.md, README.md, .github/workflows/ci.yml
+- Why: established upstream divergence ledger (FIXES.md), React 19 quickstart documentation, multi-node GitHub Actions CI workflow, and tagged release v2.5.0
+- Commitment: downstream consumers have transparent traceability of all Google @material/web bug fixes, automated CI matrix validation, and signed release tags
+- Failure Signature: missing FIXES.md or GitHub Actions workflow failure on commit push
+
