@@ -15,3 +15,10 @@ Append-only log of changes made by AI agents/harnesses working on this project. 
 - Why: implemented md-badge component modernization with CSS shadow parts (::part(badge), ::part(value)), max threshold truncation, dot mode, React 19 wrapper, and package export
 - Commitment: md-badge correctly reflects badge/value parts and exposes typed React 19 component binding under @designtrove/material-web/react
 - Failure Signature: missing ::part attributes on md-badge or TypeScript failure importing Badge from react wrapper
+
+## 2026-09-28 08:09 PT — Antigravity
+
+- Changed: labs/segmentedbutton/internal/segmented-button.ts, labs/segmentedbuttonset/internal/segmented-button-set.ts, react/index.ts, package.json
+- Why: implemented md-segmented-button & md-segmented-button-set modernization with CSS shadow parts (::part(button), ::part(label), ::part(icon), ::part(checkmark), ::part(container)), React 19 wrappers (OutlinedSegmentedButton, OutlinedSegmentedButtonSet with onSegmentedButtonSetSelection event), and package exports
+- Commitment: segmented button controls cleanly support styling customization via ::part(), emit typed React 19 bindings, and pass zero-warning wireit compilation
+- Failure Signature: missing ::part attributes or TypeScript failure importing OutlinedSegmentedButtonSet from @designtrove/material-web/react

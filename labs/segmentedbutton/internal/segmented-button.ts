@@ -75,7 +75,7 @@ export class SegmentedButton extends segmentedButtonBaseClass {
     // Needed for closure conformance
     const {ariaLabel} = this as ARIAMixinStrict;
     return html`
-      <button
+      <button part="button"
         tabindex="${this.disabled ? '-1' : '0'}"
         aria-label=${ariaLabel || nothing}
         aria-pressed=${this.selected}
@@ -122,7 +122,7 @@ export class SegmentedButton extends segmentedButtonBaseClass {
     return html`
       <span class="md3-segmented-button__leading" aria-hidden="true">
         <span class="md3-segmented-button__graphic">
-          <svg class="md3-segmented-button__checkmark" viewBox="0 0 24 24">
+          <svg class="md3-segmented-button__checkmark" part="checkmark" viewBox="0 0 24 24">
             <path
               class="md3-segmented-button__checkmark-path"
               fill="none"
@@ -130,7 +130,7 @@ export class SegmentedButton extends segmentedButtonBaseClass {
           </svg>
         </span>
         <span class="md3-segmented-button__icon" aria-hidden="true">
-          <slot name="icon"></slot>
+          <slot name="icon" part="icon"></slot>
         </span>
       </span>
     `;
@@ -140,14 +140,14 @@ export class SegmentedButton extends segmentedButtonBaseClass {
     return html`
       <span class="md3-segmented-button__leading" aria-hidden="true">
         <span class="md3-segmented-button__graphic">
-          <svg class="md3-segmented-button__checkmark" viewBox="0 0 24 24">
+          <svg class="md3-segmented-button__checkmark" part="checkmark" viewBox="0 0 24 24">
             <path
               class="md3-segmented-button__checkmark-path"
               fill="none"
               d="M1.73,12.91 8.1,19.28 22.79,4.59"></path>
           </svg>
           <span class="md3-segmented-button__icon" aria-hidden="true">
-            <slot name="icon"></slot>
+      <slot name="icon" part="icon"></slot>
           </span>
         </span>
       </span>
@@ -156,7 +156,7 @@ export class SegmentedButton extends segmentedButtonBaseClass {
 
   private renderLabel() {
     return html`
-      <span class="md3-segmented-button__label-text">${this.label}</span>
+      <span class="md3-segmented-button__label-text" part="label">${this.label}</span>
     `;
   }
 

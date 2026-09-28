@@ -101,6 +101,7 @@ export class SegmentedButtonSet extends segmentedButtonSetBaseClass {
     const {ariaLabel} = this as ARIAMixinStrict;
     return html`
       <span
+        part="container"
         role="group"
         @segmented-button-interaction="${this.handleSegmentedButtonInteraction}"
         aria-label=${ariaLabel || nothing}

@@ -64,7 +64,9 @@
     ".": "./index.js",
     "./react": "./react/index.js",
     "./badge": "./labs/badge/badge.js",
-    "./*": "./*"
+    "./*": "./*",
+    "./segmented-button": "./labs/segmentedbutton/outlined-segmented-button.js",
+    "./segmented-button-set": "./labs/segmentedbuttonset/outlined-segmented-button-set.js"
   },
   "dependencies": {
     "@lit/context": "^1.1.6",

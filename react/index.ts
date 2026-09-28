@@ -6,6 +6,8 @@ import {MdCheckbox} from '../checkbox/checkbox.js';
 import {MdSwitch} from '../switch/switch.js';
 import {MdFilledTextField} from '../textfield/filled-text-field.js';
 import {MdBadge} from '../labs/badge/badge.js';
+import {MdOutlinedSegmentedButton} from '../labs/segmentedbutton/outlined-segmented-button.js';
+import {MdOutlinedSegmentedButtonSet} from '../labs/segmentedbuttonset/outlined-segmented-button-set.js';
 
 export const FilledButton = createComponent({
   tagName: 'md-filled-button',
@@ -17,6 +19,21 @@ export const OutlinedButton = createComponent({
   tagName: 'md-outlined-button',
   elementClass: MdOutlinedButton,
   react: React,
+});
+
+export const OutlinedSegmentedButton = createComponent({
+  tagName: 'md-outlined-segmented-button',
+  elementClass: MdOutlinedSegmentedButton,
+  react: React,
+});
+
+export const OutlinedSegmentedButtonSet = createComponent({
+  tagName: 'md-outlined-segmented-button-set',
+  elementClass: MdOutlinedSegmentedButtonSet,
+  react: React,
+  events: {
+    onSegmentedButtonSetSelection: 'segmented-button-set-selection',
+  },
 });
 
 export const Checkbox = createComponent({
