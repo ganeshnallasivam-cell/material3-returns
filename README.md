@@ -48,12 +48,39 @@ npm install @designtrove/material-web
 <md-checkbox checked></md-checkbox>
 ```
 
+### React 19 Integration
+```tsx
+import { FilledButton, FilledTextField } from '@designtrove/material-web/react';
+
+export function LoginCard() {
+  return (
+    <form onSubmit={(e) => { e.preventDefault(); console.log('Submitted'); }}>
+      <FilledTextField label="Email" type="email" required />
+      <FilledButton type="submit">Log In</FilledButton>
+    </form>
+  );
+}
+```
+
 ### Copy-Paste Vendoring (Zero-Lock-in via designtrove)
 ```bash
-npx designtrove add button checkbox
+npx designtrove add button textfield dialog
 ```
 
 ---
+
+## Resolved Upstream Issues & Improvements
+
+For the full audit of Google upstream bugs resolved, see [FIXES.md](./FIXES.md). Highlights include:
+- Form submission on `Enter` keypress in single-line text fields (#4182).
+- Dialog scrim `z-index` elevation and ESC cleanup (#4948, #5384).
+- Continuous slider scrubbing via `step="any"` (#5077).
+- Real `href` routing and downloads on Tabs (#5783).
+- Keyboard space/enter activation on Menu Items (#5577).
+- Suppression of duplicate Firefox calendar indicators and password reveal eyes (#5795, #5728).
+- Radio arrow-key `input` event dispatching (#5983).
+- `formnovalidate` support on buttons (#5780).
+- Standardized CSS Shadow Parts across all components.
 
 ## License & Attribution
 
