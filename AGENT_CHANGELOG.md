@@ -29,3 +29,10 @@ Append-only log of changes made by AI agents/harnesses working on this project. 
 - Why: implemented md-navigation-bar and md-navigation-tab modernization with CSS shadow parts (::part(bar), ::part(tabs), ::part(tab), ::part(indicator), ::part(label)), React 19 wrappers with onNavigationBarActivated and onNavigationTabInteraction event bindings, and subpath package exports
 - Commitment: navigation bar and tab components expose standard CSS parts for custom styling and typed React 19 bindings, compiling with 0 errors
 - Failure Signature: missing ::part attributes or TypeScript failure importing NavigationBar / NavigationTab from @designtrove/material-web/react
+
+## 2026-09-28 08:47 PT — Antigravity
+
+- Changed: labs/navigationdrawer/internal/navigation-drawer.ts, labs/card/internal/card.ts, react/index.ts, package.json
+- Why: implemented md-navigation-drawer and md-card (elevated, filled, outlined) modernization with CSS shadow parts (::part(drawer), ::part(content), ::part(container), ::part(outline)), React 19 wrappers (NavigationDrawer with onNavigationDrawerChanged event, ElevatedCard, FilledCard, OutlinedCard), and package exports
+- Commitment: navigation drawer and card variants cleanly support external CSS part styling and export typed React 19 component definitions with zero wireit build warnings
+- Failure Signature: missing ::part attributes or TypeScript failure importing NavigationDrawer / Card variants from @designtrove/material-web/react

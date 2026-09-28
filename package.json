@@ -68,7 +68,11 @@
      "./navigation-tab": "./labs/navigationtab/navigation-tab.js",
     "./*": "./*",
     "./segmented-button": "./labs/segmentedbutton/outlined-segmented-button.js",
-    "./segmented-button-set": "./labs/segmentedbuttonset/outlined-segmented-button-set.js"
+    "./segmented-button-set": "./labs/segmentedbuttonset/outlined-segmented-button-set.js",
+    "./navigation-drawer": "./labs/navigationdrawer/navigation-drawer.js",
+    "./card/elevated-card": "./labs/card/elevated-card.js",
+    "./card/filled-card": "./labs/card/filled-card.js",
+    "./card/outlined-card": "./labs/card/outlined-card.js"
   },
   "dependencies": {
     "@lit/context": "^1.1.6",

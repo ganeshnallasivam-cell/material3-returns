@@ -38,9 +38,10 @@ export class NavigationDrawer extends navigationDrawerBaseClass {
         aria-label=${ariaLabel || nothing}
         aria-modal="${ariaModal || nothing}"
         class="md3-navigation-drawer ${this.getRenderClasses()}"
+        part="drawer"
         role="dialog">
         <md-elevation part="elevation"></md-elevation>
-        <div class="md3-navigation-drawer__slot-content">
+        <div class="md3-navigation-drawer__slot-content" part="content">
           <slot></slot>
         </div>
       </div>

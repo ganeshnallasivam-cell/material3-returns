@@ -10,6 +10,10 @@ import {MdOutlinedSegmentedButton} from '../labs/segmentedbutton/outlined-segmen
 import {MdOutlinedSegmentedButtonSet} from '../labs/segmentedbuttonset/outlined-segmented-button-set.js';
 import {MdNavigationBar} from '../labs/navigationbar/navigation-bar.js';
 import {MdNavigationTab} from '../labs/navigationtab/navigation-tab.js';
+import {MdNavigationDrawer} from '../labs/navigationdrawer/navigation-drawer.js';
+import {MdElevatedCard} from '../labs/card/elevated-card.js';
+import {MdFilledCard} from '../labs/card/filled-card.js';
+import {MdOutlinedCard} from '../labs/card/outlined-card.js';
 
 export const FilledButton = createComponent({
   tagName: 'md-filled-button',
@@ -90,4 +94,31 @@ export const NavigationTab = createComponent({
   events: {
     onNavigationTabInteraction: 'navigation-tab-interaction',
   },
+});
+
+export const NavigationDrawer = createComponent({
+  tagName: 'md-navigation-drawer',
+  elementClass: MdNavigationDrawer,
+  react: React,
+  events: {
+    onNavigationDrawerChanged: 'navigation-drawer-changed',
+  },
+});
+
+export const ElevatedCard = createComponent({
+  tagName: 'md-elevated-card',
+  elementClass: MdElevatedCard,
+  react: React,
+});
+
+export const FilledCard = createComponent({
+  tagName: 'md-filled-card',
+  elementClass: MdFilledCard,
+  react: React,
+});
+
+export const OutlinedCard = createComponent({
+  tagName: 'md-outlined-card',
+  elementClass: MdOutlinedCard,
+  react: React,
 });
