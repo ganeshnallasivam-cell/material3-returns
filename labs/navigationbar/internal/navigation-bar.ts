@@ -45,13 +45,14 @@ export class NavigationBar
     const {ariaLabel} = this as ARIAMixinStrict;
     return html`<div
       class="md3-navigation-bar"
+      part="bar"
       role="tablist"
       aria-label=${ariaLabel || nothing}
       @keydown="${this.handleKeydown}"
       @navigation-tab-interaction="${this.handleNavigationTabInteraction}"
       @navigation-tab-rendered=${this.handleNavigationTabConnected}
       ><md-elevation part="elevation"></md-elevation
-      ><div class="md3-navigation-bar__tabs-slot-container"><slot></slot></div
+      ><div class="md3-navigation-bar__tabs-slot-container" part="tabs"><slot></slot></div
     ></div>`;
   }
 

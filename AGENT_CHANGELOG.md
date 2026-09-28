@@ -22,3 +22,10 @@ Append-only log of changes made by AI agents/harnesses working on this project. 
 - Why: implemented md-segmented-button & md-segmented-button-set modernization with CSS shadow parts (::part(button), ::part(label), ::part(icon), ::part(checkmark), ::part(container)), React 19 wrappers (OutlinedSegmentedButton, OutlinedSegmentedButtonSet with onSegmentedButtonSetSelection event), and package exports
 - Commitment: segmented button controls cleanly support styling customization via ::part(), emit typed React 19 bindings, and pass zero-warning wireit compilation
 - Failure Signature: missing ::part attributes or TypeScript failure importing OutlinedSegmentedButtonSet from @designtrove/material-web/react
+
+## 2026-09-28 08:32 PT — Antigravity
+
+- Changed: labs/navigationbar/internal/navigation-bar.ts, labs/navigationtab/internal/navigation-tab.ts, react/index.ts, package.json
+- Why: implemented md-navigation-bar and md-navigation-tab modernization with CSS shadow parts (::part(bar), ::part(tabs), ::part(tab), ::part(indicator), ::part(label)), React 19 wrappers with onNavigationBarActivated and onNavigationTabInteraction event bindings, and subpath package exports
+- Commitment: navigation bar and tab components expose standard CSS parts for custom styling and typed React 19 bindings, compiling with 0 errors
+- Failure Signature: missing ::part attributes or TypeScript failure importing NavigationBar / NavigationTab from @designtrove/material-web/react

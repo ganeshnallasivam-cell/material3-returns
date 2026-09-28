@@ -8,6 +8,8 @@ import {MdFilledTextField} from '../textfield/filled-text-field.js';
 import {MdBadge} from '../labs/badge/badge.js';
 import {MdOutlinedSegmentedButton} from '../labs/segmentedbutton/outlined-segmented-button.js';
 import {MdOutlinedSegmentedButtonSet} from '../labs/segmentedbuttonset/outlined-segmented-button-set.js';
+import {MdNavigationBar} from '../labs/navigationbar/navigation-bar.js';
+import {MdNavigationTab} from '../labs/navigationtab/navigation-tab.js';
 
 export const FilledButton = createComponent({
   tagName: 'md-filled-button',
@@ -70,4 +72,22 @@ export const Badge = createComponent({
   tagName: 'md-badge',
   elementClass: MdBadge,
   react: React,
+});
+
+export const NavigationBar = createComponent({
+  tagName: 'md-navigation-bar',
+  elementClass: MdNavigationBar,
+  react: React,
+  events: {
+    onNavigationBarActivated: 'navigation-bar-activated',
+  },
+});
+
+export const NavigationTab = createComponent({
+  tagName: 'md-navigation-tab',
+  elementClass: MdNavigationTab,
+  react: React,
+  events: {
+    onNavigationTabInteraction: 'navigation-tab-interaction',
+  },
 });

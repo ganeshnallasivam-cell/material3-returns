@@ -47,6 +47,7 @@ export class NavigationTab
     // Needed for closure conformance
     const {ariaLabel} = this as ARIAMixinStrict;
     return html` <button
+      part="tab"
       class="md3-navigation-tab ${classMap(this.getRenderClasses())}"
       role="tab"
       aria-selected="${this.active}"
@@ -58,7 +59,7 @@ export class NavigationTab
         ?disabled="${this.disabled}"
         class="md3-navigation-tab__ripple"></md-ripple>
       <span aria-hidden="true" class="md3-navigation-tab__icon-content"
-        ><span class="md3-navigation-tab__active-indicator"></span
+        ><span part="indicator" class="md3-navigation-tab__active-indicator"></span
         ><span class="md3-navigation-tab__icon"
           ><slot name="inactive-icon"></slot
         ></span>
@@ -90,6 +91,7 @@ export class NavigationTab
       ? nothing
       : html` <span
           aria-hidden="${ariaHidden}"
+          part="label"
           class="md3-navigation-tab__label-text"
           >${this.label}</span
         >`;

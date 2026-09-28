@@ -63,7 +63,9 @@
   "exports": {
     ".": "./index.js",
     "./react": "./react/index.js",
-    "./badge": "./labs/badge/badge.js",
+     "./badge": "./labs/badge/badge.js",
+     "./navigation-bar": "./labs/navigationbar/navigation-bar.js",
+     "./navigation-tab": "./labs/navigationtab/navigation-tab.js",
     "./*": "./*",
     "./segmented-button": "./labs/segmentedbutton/outlined-segmented-button.js",
     "./segmented-button-set": "./labs/segmentedbuttonset/outlined-segmented-button-set.js"
