@@ -50,3 +50,10 @@ Append-only log of changes made by AI agents/harnesses working on this project. 
 - Commitment: single-line text fields submit enclosing forms on Enter, scrim layers above tabs at z-index 1000, slider steps allow continuous scrubbing
 - Failure Signature: form submission failing on Enter keypress in textfield or TS2345 type error on slider step build
 
+## 2026-09-28 10:18 PT — Antigravity
+
+- Changed: tabs/internal/tab.ts, menu/internal/controllers/menuItemController.ts, textfield/internal/_input.scss, radio/internal/single-selection-controller.ts, labs/behaviors/form-submitter.ts
+- Why: resolved open community requests (#5783 tab href navigation, #5577 menu item keyboard activation, #5795/#5728 Firefox date icon and password reveal removal, #5983 radio keyboard input events, #5780 formnovalidate form submission bypass)
+- Commitment: tabs support semantic hyperlink routing, menu items trigger clicks on Enter/Space, radio dispatches input event on arrow navigation, formnovalidate bypasses constraint checks
+- Failure Signature: tab failing to follow href, menu button failing keyboard clicks, or form validation triggering when formnovalidate is active
+
