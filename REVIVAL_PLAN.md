@@ -40,6 +40,27 @@ Before initiating a high-visibility public launch (Hacker News, Reddit r/webdev,
 
 ---
 
+
+---
+
+## Phase 2.5: Developer DX & Modernization Overhaul
+
+Addressing developer friction points from the original Google repository:
+
+- [ ] **Modern CSS Styling Contracts**:
+  - Expose clean CSS Shadow Parts (`::part(container)`, `::part(label)`, `::part(icon)`) on all components to eliminate Shadow DOM styling friction.
+  - Zero-Sass pure CSS architecture using modern CSS features (`@layer`, `color-mix()`).
+- [ ] **First-Class SSR & Framework Integration**:
+  - Declarative Shadow DOM (`<template shadowrootmode="open">`) support to eliminate Next.js/Remix hydration mismatch and FOUCE.
+  - Official typed React 19 wrappers under `@designtrove/material-web/react` with synthetic event forwarding.
+  - Vue 3 and Svelte custom-element bindings.
+- [ ] **Enterprise Form Association (ElementInternals)**:
+  - Full form participation: standard `<form>` submission, native browser validation bubbles, and `FormData` extraction across all inputs.
+- [ ] **Granular Subpath Tree-Shaking**:
+  - Optimize bundle footprint ensuring single atomic component imports bundle under 4KB gzipped.
+- [ ] **Enterprise Data Table & Missing Components**:
+  - Engineering `md-data-table` (sortable, filterable, sticky header), `md-avatar`, and `md-badge`.
+
 ## Phase 3: Upstream Issue Backlog & Bug Triage (The Top 50)
 
 When Google stepped down, ~120 open issues remained. Before going public, we resolve the top high-impact defects:
